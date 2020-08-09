@@ -1,0 +1,16 @@
+{
+  "name": "simplemusicbot",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "@discordjs/opus": "^0.3.2",
+    "chalk": "^4.1.0",
+    "discord.js": "^12.2.0",
+    "express": "^4.17.1",
+    "ffmpeg-static": "^4.2.6",
+    "ytdl-core-discord": "^1.2.1",
+    "ytpl": "^0.2.4",
+    "ytsr": "^0.1.21"
+  }
+}
