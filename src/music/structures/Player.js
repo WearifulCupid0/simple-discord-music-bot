@@ -48,12 +48,13 @@ module.exports = class Player {
     async setTextChannel(textChannel) {
         this.textChannel = textChannel;
     };
-    async createDispatcher(stream, seek) {
+    async createDispatcher(stream) {
         this.dispatcher = this.connection.play(stream, {
             type: 'opus',
             bitrate: 'auto',
         });
-        if(seek) this.time = seek;
+        this.setVolume(this.volume);
+        this.dispatcher.on('finish', () => this.handleEvents());
     };
     async play() {
         console.log(`[${chalk.green("Player")}] O player do servidor ${this.guild.name} (${this.guild.id}) começou a tocar uma música!`);
