@@ -8,7 +8,7 @@ module.exports = {
         if(!player) return message.channel.send(`Eu não estou tocando nada aqui!`);
         else if(player.voiceChannel.id !== message.member.voice.channel.id) 
         return message.channel.send(`Eu não estou no mesmo canal que o seu!`)
-        switch(args) {
+        switch(args.join(" ")) {
             case "track": 
             if(player.trackRepeat) {
             player.repeat("track", false);

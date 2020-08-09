@@ -41,17 +41,33 @@ module.exports = class Player {
     async skip() {
         this.dispatcher.end();
     };
+    async setVoiceChannel(voiceChannel) {
+        this.voiceChannel = voiceChannel;
+        this.client.channels.cache.get(voiceChannel.id).join().then(c => this.connection = c);
+    };
+    async setTextChannel(textChannel) {
+        this.textChannel = textChannel;
+    };
+    async createDispatcher(stream, seek) {
+        this.dispatcher = this.connection.play(stream, {
+            type: 'opus',
+            bitrate: 'auto',
+        });
+        if(seek) this.time = seek;
+    };
     async play() {
         console.log(`[${chalk.green("Player")}] O player do servidor ${this.guild.name} (${this.guild.id}) começou a tocar uma música!`);
         const stream = await ytdl(this.queue[0].uri, {
-            highWaterMark: 1 << 25,
-            filter: 'audioonly',
+            filter: "audioonly",
+            quality: "highestaudio",
+            highWaterMark: 1024 * 1024 * 10,
             opusEncoded: true,
         });
         this.dispatcher = this.connection.play(stream, {
             type: 'opus',
             bitrate: 'auto'
         });
+        this.client.music.emit("trackStart", this, this.queue[0]);
         this.playing = true;
         this.sendMessage();
         this.setVolume(this.volume);
@@ -61,9 +77,11 @@ module.exports = class Player {
         console.log(`[${chalk.green("Player")}] O player do servidor ${this.guild.name} (${this.guild.id}) parou de tocar uma música!`);
         this.playing = false;
         this.dispatcher = null;
+        this.client.music.emit("trackEnd", this, this.queue[0]);
         this.resetVotes();
         this.deleteMessage();
         if(this.queue.length === 0) {
+            this.client.music.emit("queueEnd", this);
             this.client.music.delete(this.guild.id);
         } else if(this.trackRepeat) {
             this.play();
@@ -72,6 +90,7 @@ module.exports = class Player {
             this.play();
         } else if(this.queue.length === 1) {
             this.queue.shift();
+            this.client.music.emit("queueEnd", this);
             this.client.music.delete(this.guild.id);
         } else  {
             this.queue.shift();
@@ -80,9 +99,13 @@ module.exports = class Player {
     };
     async pause() {
         switch(this.paused) {
-        case true: this.dispatcher.resume(); this.paused = false;
+        case true: this.dispatcher.resume(); 
+        this.paused = false; 
+        this.client.music.emit("pause", this, false);
         break;
-        case false: this.dispatcher.pause(); this.paused = true;
+        case false: this.dispatcher.pause(); 
+        this.paused = true;
+        this.client.music.emit("pause", this, true);
         break;
         };
     };
@@ -90,6 +113,7 @@ module.exports = class Player {
         if(type === "queue") this.queueRepeat = state;
         else if(type === "track") this.trackRepeat = state;
         else this.queueRepeat = state;
+        this.client.music.emit("repeat", this, type, state);
     };
     async stop() {
         this.queue.splice(0);
@@ -97,7 +121,12 @@ module.exports = class Player {
     };
     async setVolume(volume) {
         this.volume = volume;
+        this.client.music.emit("volume", this, volume);
         this.dispatcher.setVolumeLogarithmic(this.volume / 200);
+    };
+    async allowSendMessage(state) {
+        this.allowSendMessages = state;
+        this.client.music.emit("allowSendMessages", this, state);
     };
     sendMessage() {
         if(this.allowSendMessages) this.textChannel.send(new MessageEmbed()
@@ -112,7 +141,7 @@ Adicionada pelo(a): ${this.queue[0].requester.username}
         ).then(msg => this.message = msg);
     };
     deleteMessage() {
-        if(this.allowSendMessages) {
+        if(this.allowSendMessages && this.message !== null) {
             this.message.delete();
             this.message = null;
         };

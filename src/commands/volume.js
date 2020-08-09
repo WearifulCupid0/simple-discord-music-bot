@@ -10,7 +10,7 @@ module.exports = {
         else if(player.voiceChannel.id !== message.member.voice.channel.id) 
         return message.channel.send(`Eu não estou no mesmo canal que o seu!`)
         else if(isNaN(args.join(" "))) return message.channel.send(`Fale um número valido!`);
-        else if(args.join(" ") < 1 || args.join(" ") >= 200) return message.channel.send(`Fale um número entre 1 e 200!`);
+        else if(args.join(" ") < 1 || args.join(" ") > 200) return message.channel.send(`Fale um número entre 1 e 200!`);
         player.setVolume(args.join(" "));
         message.channel.send(`Volume alterado para \`${args}%\``)
     },
