@@ -1,7 +1,7 @@
 # 🔷 Início
 
 Olá! 👋<br>
-Esse é apenas um simples de música para o Discord, usando ytdl para tocar música!<br>
+Esse é apenas um simples bot de música para o Discord, usando ytdl para tocar música!<br>
 Ele inclui uma mini-api em json que mostra as músicas na queue e informações do player!<br>
 E o melhor de tudo, não precisa de nenhuma key do Youtube! Ele usa scraping para conseguir as informações.<br>
 
