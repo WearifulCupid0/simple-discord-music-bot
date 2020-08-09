@@ -12,7 +12,7 @@ module.exports = class MusicManager {
         this.players = new Collection();
         this.client.on('messageDelete', async(message) => {
             const player = this.players.get(message.guild.id);
-            if(player && player.message && message.id === player.message.id) return this.sendMessage();
+            if(player && player.message && message.id === player.message.id) return player.sendMessage();
         });
     };
     async spawn(voiceChannel, textChannel, guild) {
