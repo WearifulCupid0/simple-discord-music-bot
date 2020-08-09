@@ -29,7 +29,7 @@ OBS: A porta 3000 ela pode mudar, isso depende do local onde o seu bot está hos
 
 ## ⚙️ Como configurar?
 
-Bem, isso é bem simples basta você olhar o exemplo da config.json.example
+Bem, isso é bem simples basta você olhar o exemplo na config.json.example
 
 ## 🔎 Observações:
 
@@ -37,5 +37,5 @@ Eu recomendo você ter um conhecimento básico dos sistemas de música da discor
 
 ## ➕ Extras:
 
-Ficou com alguma dúvida ou teve albuma ideia? Abra uma issue aqui no github e espere alguma resposta. <br>
+Ficou com alguma dúvida ou teve alguma ideia? Abra uma issue aqui no github e espere alguma resposta. <br>
 Ou então estre em contato comigo no Discord: Weariful#7333<br>
