@@ -9,6 +9,7 @@ module.exports = class Track {
         this.isPlaylist = isPlaylist;
     };
     get durationInMs() {
+        if(this.duration) {
         const args = this.duration.split(':')
     if (args.length === 3) {
         return parseInt(args[0]) * 60 * 60 * 1000 +
@@ -20,5 +21,8 @@ module.exports = class Track {
     } else {
         return parseInt(args[0]) * 1000
     };
+        } else {
+            return 93487593457349857340580934
+        }
     };
 };
