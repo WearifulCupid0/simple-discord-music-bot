@@ -21,10 +21,10 @@ OBS: A porta 3000 ela pode mudar, isso depende do local onde o seu bot está hos
 
 -Discord.js<br>
 -ytdl-core-discord<br>
--ytsr e ytpl<br>
+-ytsr & ytpl<br>
 -express<br>
 -@discordjs/opus<br>
--ffmpeg-static<br>
+-ffmpeg-static & ffmpeg<br>
 -chalk<br>
 
 ## ⚙️ Como configurar?
