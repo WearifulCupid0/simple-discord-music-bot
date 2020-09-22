@@ -16,17 +16,15 @@ module.exports = class extends Client {
         this.on('ready', () => {
             this.music = new MusicManager(this);
             console.log(`[${chalk.magenta("BOT")}] Estou online em ${this.guilds.cache.size} servidores com ${this.users.cache.size} usuários!`);
-            let activities = [
-                { name: `${this.guilds.cache.size} servidores.`, type: 0 },
-                { name: `${this.music.players.size} players.`, type: 0 },
-                { name: `${this.guilds.cache.size} usuários.`, type: 0 },
-                { name: `${this.commands.size} comandos.`, type: 0 }
-            ];
             let index = 0;
             setInterval(async() => {
-                let activitie = activities[index];
-                index++;
-                if(!activitie) { activitie = activities[0]; index = 0 }
+                let activities = [
+                    { name: `${this.guilds.cache.size} servidores.`, type: 0 },
+                    { name: `${this.music.players.size} players.`, type: 0 },
+                    { name: `${this.guilds.cache.size} usuários.`, type: 0 },
+                    { name: `${this.commands.size} comandos.`, type: 0 }
+                ];
+                let activitie = activities[index++ % activities.length];
                 this.user.setPresence({ activity: { name: activitie.name, type: activitie.type } });
             }, 30000);
         });
