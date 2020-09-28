@@ -69,7 +69,7 @@ module.exports = class MusicManager extends EventEmitter {
             } else {
                 ytsr(query).then(res => {
                     let data = [];
-                    let res = res.items.filter(a => a.type === "video");
+                    res = res.items.filter(a => a.type === "video");
                     res.map(track => data.push(new Track(track, requester, false)));
                     resolve(data);
                 }).catch(err => reject(err))
