@@ -55,32 +55,24 @@ module.exports = class MusicManager extends EventEmitter {
         return new Promise(async(resolve, reject) => {
             if(ytpl.validateURL(query)) {
                 const playlistID = await ytpl.getPlaylistID(query);
-                ytpl(playlistID, (error, results) => {
-                    if(error) {
-                        reject(error);
-                    } else {
-                        let data = [];
-                        results.items.map(track => data.push(new Track({
+                ytpl(playlistID).then(res => {
+                    let data = [];
+                    res.items.map(track => data.push(new Track({
                             title: track.title,
                             link: track.url,
                             duration: track.duration,
                             author: { name: track.author.name },
                             thumbnail: track.thumbnail,
                         }, requester, true)));
-                        resolve(data);
-                    };
-                });
+                    resolve(data)
+                }).catch(err => reject(err));
             } else {
-                ytsr(query, (error, results) => {
-                    if(error) {
-                        reject(error);
-                    } else {
+                ytsr(query).then(res => {
                     let data = [];
-                    let res = results.items.filter(a => a.type === "video");
+                    let res = res.items.filter(a => a.type === "video");
                     res.map(track => data.push(new Track(track, requester, false)));
                     resolve(data);
-                    };
-                });
+                }).catch(err => reject(err))
             };
         });
     };
