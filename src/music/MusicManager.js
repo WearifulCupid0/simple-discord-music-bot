@@ -53,7 +53,7 @@ module.exports = class MusicManager extends EventEmitter {
     };
     async search(query, requester) {
         return new Promise(async(resolve, reject) => {
-            if(ytpl.validateURL(query)) {
+            if(ytpl.validateID(query)) {
                 const playlistID = await ytpl.getPlaylistID(query);
                 ytpl(playlistID).then(res => {
                     let data = [];
