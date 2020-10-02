@@ -20,12 +20,14 @@ OBS: A porta 3000 ela pode mudar, isso depende do local onde o seu bot está hos
 ## 📚 Dependencias:
 
 -Discord.js<br>
--ytdl-core-discord<br>
+-ytdl-core<br>
 -ytsr & ytpl<br>
 -express<br>
 -@discordjs/opus<br>
 -ffmpeg-static & ffmpeg<br>
 -chalk<br>
+-node-fetch<br>
+-cheerio<br>
 
 ## ⚙️ Como configurar?
 
