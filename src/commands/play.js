@@ -10,19 +10,12 @@ module.exports = {
         if(!voiceChannel) return message.channel.send(`Você não está em um canal de voz!`);
         if(myVoiceChannel && myVoiceChannel.id !== voiceChannel.id) return message.channel.send(`Eu já estou tocando em outro canal de voz!`);
         if(!args) return message.channel.send(`Você não falou nenhuma música!`);
+        client.music.players.get(message.guild.id) ? client.music.players.get(message.guild.id) : await client.music.spawn(message.member.voice.channel, message.channel, message.guild);
         message.channel.send(`Pesquisando ${args.slice(0).join(" ")}`);
-        const music = await client.music.search(args.slice(0).join(" "), message.author);
-        if(!music || !music[0]) return message.channel.send(`Nenhuma música encontrada!`);
-        let msg;
-        music[0].isPlaylist
-        ? msg = `Playlist adicionada com sucesso!`
-        : msg = `${music[0].title} de ${music[0].author}`;
-        message.channel.send(msg);
-        let player = client.music.players.get(message.guild.id);
-        if(!player) {
-            player = await client.music.spawn(voiceChannel, message.channel, message.guild, { selfdeaf: true });
-        };
-        if(music[0].isPlaylist) return player.addPlaylistQueue(music);
-        else return player.addTrackQueue(music[0]);
+        const response = await client.music.search(args.slice(0).join(" "), message.author);
+        if(response.loadType === 'LOAD_FAILED') return message.channel.send('Um erro aconteceu buscando as músicas!');
+        if(response.loadType === 'PLAYLIST_LOADED') client.music.handleSongs(response.tracks, message.guild.id);
+        else client.music.handleSong(response.tracks[0], message.guild.id);
+        message.channel.send(response.loadType == 'PLAYLIST_LOADED' ? `Playlist: ${response.playlistInfo.title}` : `${response.tracks[0].title} - ${response.tracks[0].author}`)
     },
 };

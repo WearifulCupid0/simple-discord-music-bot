@@ -15,6 +15,16 @@ module.exports = class extends Client {
         this.music = null;
         this.on('ready', () => {
             this.music = new MusicManager(this);
+            fs.readdir('./src/music/apis', (err, files) => {
+                if(err) return console.log(err);
+                files.filter(a => a.split('.').pop() === 'js');
+                files.forEach(file => {
+                    const pull = require(`./music/apis/${file}`);
+                    const api = new pull(this.music);
+                    this.music.apis[api.name] = api;
+                    console.log(`[${chalk.blue('APIs')}] A api ${api.name} foi carregada com sucesso!`)
+                });
+            });
             console.log(`[${chalk.magenta("BOT")}] Estou online em ${this.guilds.cache.size} servidores com ${this.users.cache.size} usuários!`);
             let index = 0;
             setInterval(async() => {

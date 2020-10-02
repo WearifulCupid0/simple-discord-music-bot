@@ -1,6 +1,5 @@
 const { MessageEmbed } = require("discord.js");
 const chalk = require("chalk");
-const ytdl = require("ytdl-core-discord");
 module.exports = class Player {
     constructor(client, connection, voiceChannel, textChannel, guild) {
 
@@ -30,14 +29,6 @@ module.exports = class Player {
     async resetVotes() {
         this.skipVotes.splice(0);
     };
-    async addPlaylistQueue(playlist) {
-        playlist.forEach(track => this.queue.push(track));
-        if(this.playing || this.dispatcher !== null) {} else { this.play() };
-    };
-    async addTrackQueue(track) {
-        this.queue.push(track);
-        if(this.playing || this.dispatcher !== null) {} else { this.play() };
-    };
     async skip() {
         this.dispatcher.end();
     };
@@ -48,26 +39,15 @@ module.exports = class Player {
     async setTextChannel(textChannel) {
         this.textChannel = textChannel;
     };
-    async createDispatcher(stream) {
-        this.dispatcher = this.connection.play(stream, {
-            type: 'opus',
-            bitrate: 'auto',
-        });
-        this.setVolume(this.volume);
-        this.dispatcher.on('finish', () => this.handleEvents());
+    async getStream() {
+        const song = this.queue[0];
+        if(song.uri.includes('youtube')) return await this.client.music.apis.youtube.getStream(song.track);
+        else return await this.client.music.apis.soundcloud.getStream(song.track);
     };
     async play() {
         console.log(`[${chalk.green("Player")}] O player do servidor ${this.guild.name} (${this.guild.id}) começou a tocar uma música!`);
-        const stream = await ytdl(this.queue[0].uri, {
-            filter: "audioonly",
-            quality: "highestaudio",
-            highWaterMark: 1024 * 1024 * 10,
-            opusEncoded: true,
-        });
-        this.dispatcher = this.connection.play(stream, {
-            type: 'opus',
-            bitrate: 'auto'
-        });
+        const stream = await this.getStream();
+        this.dispatcher = await this.connection.play(stream);
         this.client.music.emit("trackStart", this, this.queue[0]);
         this.playing = true;
         this.sendMessage();
@@ -132,13 +112,11 @@ module.exports = class Player {
     sendMessage() {
         if(this.allowSendMessages) this.textChannel.send(new MessageEmbed()
         .setAuthor(`Tocando agora:`)
-        .setThumbnail(this.queue[0].artworkUrl)
+        .setThumbnail(this.queue[0].artwork)
         .setTitle(this.queue[0].title)
         .setColor('RANDOM')
         .setURL(this.queue[0].uri)
-        .setDescription(`Autor: ${this.queue[0].author} 
-Adicionada pelo(a): ${this.queue[0].requester.username}
-`)
+        .setDescription(`Autor: ${this.queue[0].author}\nAdicionado por: ${this.queue[0].requester.username}`)
         ).then(msg => this.message = msg);
     };
     deleteMessage() {

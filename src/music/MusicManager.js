@@ -1,17 +1,15 @@
 const Player = require("./structures/Player");
-const Track = require("./structures/Track");
 const { Collection } = require("discord.js");
 const { EventEmitter } = require("events");
 const chalk = require("chalk");
-const ytsr = require("ytsr");
-const ytpl = require("ytpl");
-ytpl.do_warn_deprecate = false;
-ytsr.do_warn_deprecate = false;
+const fs = require("fs");
+
 module.exports = class MusicManager extends EventEmitter {
     constructor(client) {
         super();
         this.client = client;
         this.players = new Collection();
+        this.apis = {};
         this.client.on('messageDelete', async(message) => {
             const player = this.players.get(message.guild.id);
             if(player && player.message && message.id === player.message.id) return player.sendMessage();
@@ -52,28 +50,22 @@ module.exports = class MusicManager extends EventEmitter {
         return this.players.delete(guildID);
     };
     async search(query, requester) {
-        return new Promise(async(resolve, reject) => {
-            if(ytpl.validateID(query)) {
-                const playlistID = await ytpl.getPlaylistID(query);
-                ytpl(playlistID).then(res => {
-                    let data = [];
-                    res.items.map(track => data.push(new Track({
-                            title: track.title,
-                            link: track.url,
-                            duration: track.duration,
-                            author: { name: track.author.name },
-                            thumbnail: track.thumbnail,
-                        }, requester, true)));
-                    resolve(data)
-                }).catch(err => reject(err));
-            } else {
-                ytsr(query).then(res => {
-                    let data = [];
-                    res = res.items.filter(a => a.type === "video");
-                    res.map(track => data.push(new Track(track, requester, false)));
-                    resolve(data);
-                }).catch(err => reject(err))
-            };
-        });
+        let res;
+        if(query.includes('soundcloud')) res = await this.apis.soundcloud.getInfo(query);
+        else res = await this.apis.youtube.getInfo(query);
+        res.tracks.forEach(t => t.addRequester(requester));
+        return res;
+    };
+    handleSong(song, guildID) {
+        const player = this.players.get(guildID);
+        if(!player) return;
+        player.queue.push(song);
+        if(!player.playing && !player.paused) player.play();
+    };
+    handleSongs(songs, guildID) {
+        const player = this.players.get(guildID);
+        if(!player) return;
+        songs.map(song => player.queue.push(song));
+        if(!player.playing && !player.paused) player.play();
     };
 };
