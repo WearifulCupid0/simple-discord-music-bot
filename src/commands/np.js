@@ -9,7 +9,7 @@ module.exports = {
         if(!player) return message.channel.send(`Eu não estou tocando nada aqui!`);
         message.channel.send(new MessageEmbed()
         .setAuthor(`Tocando agora:`)
-        .setThumbnail(player.queue[0].artworkUrl)
+        .setThumbnail(player.queue[0].artwork)
         .setTitle(player.queue[0].title)
         .setColor('RANDOM')
         .setURL(player.queue[0].uri)
