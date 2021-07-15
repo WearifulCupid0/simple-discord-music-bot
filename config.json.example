@@ -1,0 +1,10 @@
+{
+    "prefix": "o prefix",
+    "token": "o token do bot",
+    "httpPassword": "uma senha qualquer",
+    "devID": "o seu ID",
+    "entryConfig": {
+        "selfmute": false,
+        "selfdeaf": false
+    }
+}
